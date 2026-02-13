@@ -41,6 +41,6 @@ jobs:
           uses: azure/webapps-deploy@v3
           with:
             app-name: demodotnetaction
-            publis-profile: ${{secrets.APPSERVICE_PUBLISH_PROFILE}}
+            publish-profile: ${{secrets.APPSERVICE_PUBLISH_PROFILE}}
             package: ./app
                   
