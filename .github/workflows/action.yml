@@ -16,6 +16,12 @@ jobs:
           uses: actions/setup-dotnet@v3
           with:
             dotnet-version: 8.0.x
+        - name: Cache dependencies
+          uses: actions/cache@v3
+          with:
+            path: ~/.nuget/packages
+            key: cac-dep-${{hashFiles('**/*.csproj')}}
+                 
         - name: Restore nuget packages
           run: dotnet restore
         - name: Build the code
