@@ -1,0 +1,45 @@
+name: Website Deployment
+on:
+ push:
+    branches:
+        - master
+        - dev
+jobs:
+   build:
+     runs-on: ubuntu-latest
+     steps:
+        - name : Get the code
+          uses: actions/checkout@v3
+        - name : Setup dotnet
+          uses: actions/setup-dotnet@v3
+          with:
+            dotnet-version: 8.0.x
+        - name: Restore nuget packages
+          run: dotnet restore
+        - name: Build the code
+          run: dotnet build --no-restore
+        - name: Test the code
+          run: dotnet test --no-restore
+        - name: Publish
+          run: dotnet publish  github-demo-app/github-demo-app.csproj -C Release -o website
+        - name: Upload artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: app
+            path: website/**
+            if-no-files-found: error
+   deploy:
+     runs-on: ubuntu-latest
+     steps:
+        - name: Download the artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: app
+            path: ./app
+        - name: Deploy in web app
+          uses: azure/webapp-deploy@v3
+          with:
+            app-name: demodotnetactions
+            publis-profile: ${{secrets.APPSERVICE_PUBLISH_PROFILE}}
+            package: ./app
+                  
