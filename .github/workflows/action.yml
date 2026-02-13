@@ -4,6 +4,8 @@ on:
     branches:
         - master
         - dev
+env:
+  webapp-name: demodotnetactions         
 jobs:
    build:
      runs-on: ubuntu-latest
@@ -36,11 +38,11 @@ jobs:
           uses: actions/download-artifact@v4
           with:
             name: app
-            path: ./app
+            path: ./package
         - name: Deploy in web app
           uses: azure/webapps-deploy@v3
           with:
-            app-name: demodotnetaction
+            app-name: ${{env.webapp-name}}
             publish-profile: ${{secrets.APPSERVICE_PUBLISH_PROFILE}}
-            package: ./app
+            package: ./package
                   
