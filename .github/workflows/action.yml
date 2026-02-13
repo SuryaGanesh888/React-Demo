@@ -5,7 +5,7 @@ on:
         - master
         - dev
 env:
-  webapp-name: demodotnetactions         
+  webapp-name: demodotnetaction         
 jobs:
    build:
      runs-on: ubuntu-latest
