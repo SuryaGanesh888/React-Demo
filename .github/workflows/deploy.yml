@@ -1,9 +1,7 @@
 name: Website Deployment
 on:
  push:
-    branches:
-        - master
-        - dev
+    branches: master
 env:
   webapp-name: demodotnetaction         
 jobs:

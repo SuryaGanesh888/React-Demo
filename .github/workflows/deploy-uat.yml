@@ -1,0 +1,58 @@
+name: UAT Slot Deployment
+on:
+ push:
+    branches: uat
+env:
+  webapp-name: demodotnetaction
+  slot-name: uat
+
+jobs:
+  uat-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v3
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: cach-dep-${{hashFiles('**/*.csproj')}}    
+      - name: Restore
+        run: dotnet restore
+      - name: Build the code
+        run: dotnet build --no-restore
+      - name: Test code
+        run: dotnet test --no-restore 
+      - name: Publish the code
+        run: donet publish github-demo-app/github-demo-app.csproj -c Release -o Website 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: Website/**
+          if-no-files-found: error
+  uat-deploy:
+        runs-on: ubuntu-latest
+        steps:
+           - name: Download artifact
+             uses: actions/download-artifact@v4
+             with:
+                name: app
+                path: ./artifact
+           - name: Deploy in web app
+             uses: azure/webapps-deploy@v3
+             with:
+                app-name: ${{env.webapp-name}}
+                slot-name: ${{env.slot-name}}
+                publish-profile: ${{secrets.APPSERVICE_PUBLISH_PROFILE_UAT}}
+                package: ./artifact     
+                     
+
+
+
+
+
